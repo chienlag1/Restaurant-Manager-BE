@@ -15,9 +15,11 @@ const {
   deleteTable,
   deleteUser,
   getAdminProfile,
-  changeAdminPassword, // Make sure it's imported here
-} = require("../controllers/AdminController");
-
+  changeAdminPassword,
+  uploadAvatarAdmin,
+  } = require("../controllers/AdminController");
+const upload = require("../config/multerConfig");
+const { authenticateToken } = require("../middlewares/authenticateToken");
 const router = express.Router();
 
 // Route cho Admin
@@ -41,5 +43,8 @@ router.post("/tables", isAdmin, addTable);
 router.get("/tables", isAdmin, getTables);
 router.put("/tables/:id", isAdmin, updateTable);
 router.delete("/tables/:id", isAdmin, deleteTable);
+
+// Route upload avatar admin
+router.post("/upload-avatar-admin", upload.single("profile-image"), isAdmin, uploadAvatarAdmin);
 
 module.exports = router;

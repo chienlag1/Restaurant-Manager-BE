@@ -386,3 +386,28 @@ exports.deleteTable = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi xóa bàn", error: error.message });
   }
 };
+exports.uploadAvatarAdmin = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Lấy đường dẫn ảnh đã upload
+    const avatarUrl = `/uploads/${req.file.filename}`;
+
+    // Cập nhật avatar cho admin
+    const admin = await Admin.findById(req.admin.userId); // Lấy admin từ token
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    // Cập nhật avatar trong cơ sở dữ liệu
+    admin.avatar = avatarUrl;
+    await admin.save();
+
+    res.json({ avatarUrl });
+  } catch (error) {
+    console.error("Error uploading avatar:", error);
+    res.status(500).json({ error: "Error uploading avatar" });
+  }
+};
